@@ -21,7 +21,7 @@
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.16.4200023" IncludeAssets="compile" />
     <Reference Include="AzureValley">
-      <HintPath>lib\AzureValley.dll</HintPath>
+      <HintPath>..\lib\AzureValley.dll</HintPath>
     </Reference>
   </ItemGroup>
 
