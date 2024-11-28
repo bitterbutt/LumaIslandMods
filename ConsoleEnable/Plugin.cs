@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ConsoleEnable
 {
@@ -13,27 +15,25 @@ namespace ConsoleEnable
     public class Plugin : BaseUnityPlugin
     {
         internal static new ManualLogSource Logger;
-
+        public static ConfigEntry<KeyboardShortcut> OpenConsoleKeybind;
+        public static KeyboardShortcut OpenConsoleKeybindValue => OpenConsoleKeybind.Value;
         private void Awake()
         {
             Logger = base.Logger;
-            Setup();
-            var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-            harmony.PatchAll();
-            Logger.LogWarning("Cheats are now enabled by default.");
-            Logger.LogWarning("Press ` to open the console after loading a save...");
-            Logger.LogWarning("Enter 'help' to see the list of available commands...");
-        }
+            OpenConsoleKeybind = Config.Bind(
+                "Keybinds",
+                "OpenConsole",
+                new KeyboardShortcut(KeyCode.BackQuote),
+                "Keybind to open the console"
+            );
 
-        private void Setup()
-        {
             Harmony.CreateAndPatchAll(typeof(Hooks));
             Harmony.CreateAndPatchAll(typeof(ConsoleUIPatch));
-        }
-
-        public static void NoOpMethod()
-        {
-            // Do nothing
+            Harmony.CreateAndPatchAll(typeof(ConsoleUIUpdatePrefixPatch));
+            Logger.LogWarning("Cheats are now enabled by default.");
+            Logger.LogWarning($"Press {OpenConsoleKeybind.Value.MainKey} to open the console after loading a save.");
+            Logger.LogWarning("If that fails, use CTRL + F1");
+            Logger.LogWarning("Enter 'help' to see the list of available commands.");
         }
     }
 
@@ -75,6 +75,38 @@ namespace ConsoleEnable
             {
                 cheatsEnabledField.SetValue(__instance, true);
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(ConsoleUI), "Update")]
+    public static class ConsoleUIUpdatePrefixPatch
+    {
+        static bool Prefix(ConsoleUI __instance)
+        {
+            if (__instance.IsOpen && Keyboard.current.escapeKey.wasPressedThisFrame)
+            {
+                __instance.Close();
+                return false;
+            }
+
+            if (Plugin.OpenConsoleKeybindValue.IsDown())
+            {
+                FieldInfo panelField = AccessTools.Field(typeof(ConsoleUI), "m_panel");
+                GameObject panel = (GameObject)panelField.GetValue(__instance);
+                if (panel.activeSelf)
+                {
+                    __instance.Close();
+                }
+                else
+                {
+                    __instance.Open();
+                    __instance.PlayerGameUI.Player.GetComponent<ControlContextManager>().SetConsoleActive(true);
+                    __instance.m_input.FixedSelect();
+                }
+                return false;
+            }
+
+            return true;
         }
     }
 }
