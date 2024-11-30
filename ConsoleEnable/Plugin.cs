@@ -30,6 +30,7 @@ namespace ConsoleEnable
             Harmony.CreateAndPatchAll(typeof(Hooks));
             Harmony.CreateAndPatchAll(typeof(ConsoleUIPatch));
             Harmony.CreateAndPatchAll(typeof(ConsoleUIUpdatePrefixPatch));
+            Harmony.CreateAndPatchAll(typeof(ChestCheatPatch));
             Logger.LogWarning("Cheats are now enabled by default.");
             Logger.LogWarning($"Press {OpenConsoleKeybind.Value.MainKey} to open the console after loading a save.");
             Logger.LogWarning("If that fails, use CTRL + F1");
@@ -107,6 +108,27 @@ namespace ConsoleEnable
             }
 
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(ConsoleUI), "ChestCheat")]
+    public static class ChestCheatPatch
+    {
+        static bool Prefix(string[] obj)
+        {
+            var globalStates = GameState.Instance.GlobalStates;
+            float currentValue = globalStates.GetValue("ChestCheat");
+            float newValue = (currentValue == 1f) ? 0f : 1f;
+            globalStates.SetValue("ChestCheat", newValue, false);
+            if (newValue == 1f)
+            {
+                Plugin.Logger.LogWarning("Chest cheat enabled.");
+            }
+            else
+            {
+                Plugin.Logger.LogWarning("Chest cheat disabled.");
+            }
+            return false;
         }
     }
 }
