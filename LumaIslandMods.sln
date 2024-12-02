@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleEnable", "ConsoleEna
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemDumper", "ItemDumper\ItemDumper.csproj", "{85AB7854-A87E-45D5-BF2D-247EA5E7DD49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeLobby", "LargeLobby\LargeLobby.csproj", "{47EA69DA-88A1-499F-A3ED-080744F99457}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{85AB7854-A87E-45D5-BF2D-247EA5E7DD49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85AB7854-A87E-45D5-BF2D-247EA5E7DD49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85AB7854-A87E-45D5-BF2D-247EA5E7DD49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47EA69DA-88A1-499F-A3ED-080744F99457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47EA69DA-88A1-499F-A3ED-080744F99457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47EA69DA-88A1-499F-A3ED-080744F99457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47EA69DA-88A1-499F-A3ED-080744F99457}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
